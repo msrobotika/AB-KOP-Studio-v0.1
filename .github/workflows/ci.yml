@@ -1,0 +1,62 @@
+name: AB-KOP Studio · pruebas y capturas reales
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'AB-KOP-Studio-PORTABLE.html'
+      - 'tools/**'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+concurrency:
+  group: ab-kop-studio-v01-main-capturas
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  verify-and-capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Comprobar sintaxis y 21 pruebas Ladder/KOP
+        run: |
+          node --check src/engine.js
+          node --check src/app.js
+          node --test tests/engine.test.js
+      - name: Instalar Chromium para pruebas de interfaz
+        run: |
+          python -m pip install 'playwright>=1.55,<2'
+          python -m playwright install --with-deps chromium
+      - name: Ejecutar 10 pruebas reales y capturar cinco pantallas
+        run: python -m unittest discover -s tests -p test_browser.py -v
+      - name: Guardar capturas reales como artefacto de verificación
+        uses: actions/upload-artifact@v4
+        with:
+          name: AB-KOP-Studio-v0.1-capturas-reales
+          path: docs/screenshots/kop-*.png
+          if-no-files-found: error
+      - name: Publicar PNG verificados en main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/screenshots/kop-*.png
+          if ! git diff --cached --quiet; then
+            git commit -m 'docs(kop): add authentic Chromium screenshots'
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
