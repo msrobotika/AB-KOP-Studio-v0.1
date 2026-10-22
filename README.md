@@ -1,5 +1,10 @@
 # AB-KOP Studio · MS ROBOTIKA
 
+> **Ficha del proyecto · MS ROBOTIKA**  
+> **Área:** Editor y simulador Ladder/KOP · **Estado:** v0.1 · simulación local  
+> **Evidencia:** [CI y pruebas](https://github.com/msrobotika/AB-KOP-Studio-v0.1/actions) · [Capturas del programa](docs/screenshots/) · [Alcance y pendientes](docs/PROJECT_STATUS.md)  
+> **Límite:** Sin comunicación física con PLC; temporizadores por ciclos virtuales.
+
 **v0.1.0 · Ladder/KOP didáctico · Español · MIT · 100 % local**
 
 AB-KOP Studio es un editor y simulador original de lógica de contactos: entradas digitales virtuales, contactos NO y NC, ramas en serie (AND) y paralelo (OR), bobinas COIL, SET, RESET y temporizadores TON por **ciclos simulados**. No conecta a PLC ni controla maquinaria.
